@@ -1,19 +1,25 @@
-import React from 'react';
-import { View, Text, SafeAreaView } from 'react-native';
-import { Button } from '@ui-kitten/components';
-import tailwind from 'tailwind-rn';
-export default function AppNavigator() {
-  const [counter, setCounter] = React.useState(0);
+import React, {useContext} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import SplashScreen from './Splash';
+import HomeScreen from './Home';
+import {MyContext} from '@/context';
+
+const Stack = createNativeStackNavigator();
+
+const AppNavigator = () => {
+  const {stores} = useContext(MyContext);
   return (
-    <SafeAreaView style={tailwind('h-full')}>
-      <View style={tailwind('py-12 items-center')}>
-        <View style={tailwind('bg-blue-200 px-3 py-1 rounded-full')}>
-          <Text style={tailwind('text-blue-800 font-semibold')}>
-            Hello Tailwind
-          </Text>
-        </View>
-      </View>
-      <Button onPress={() => setCounter(counter + 1)}>BUTTON</Button>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        {stores.isSplash ? (
+          <Stack.Screen name="Splash" component={SplashScreen} />
+        ) : (
+          <Stack.Screen name="Home" component={HomeScreen} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
+
+export default AppNavigator;
