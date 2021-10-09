@@ -6,8 +6,11 @@ module.exports = {
       {
         root: ['./src'],
         alias: {
-          '@': './src',
           _: 'lodash',
+          '@': './src',
+          '@assets': './src/assets',
+          '@context': './src/context',
+          '@screens': './src/screens'
         },
       },
     ],

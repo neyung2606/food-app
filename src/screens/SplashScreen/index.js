@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, View} from 'react-native';
 import LottieView from 'lottie-react-native';
-import { MyContext } from '@/context';
+import {MyContext} from '@context';
 
-const SplashScreen = props => {
-  const { actions, stores } = useContext(MyContext)
+const SplashScreen = () => {
+  const {actions} = useContext(MyContext);
   const onAnimationFinish = () => {
     actions.setIsSplash(false);
   };
