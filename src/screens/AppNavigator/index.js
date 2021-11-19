@@ -9,38 +9,43 @@ import SplashScreen from '@screens/SplashScreen';
 import HomeScreen from '@screens/HomeScreen';
 import ActivityScreen from '@screens/ActivityScreen';
 import NotificationScreen from '@screens/NotificationScreen';
-import MeScreen from '@screens/MeScreen';
+import CameraShot from '@/components/CameraShot';
+import ChooseImage from '@/components/ChooseImage';
+import ReadTraffic from '@/components/ReadTraffic';
 import * as Animatable from 'react-native-animatable';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const StackCamera = () => (
+  <Stack.Navigator initialRouteName="SelectionImage" screenOptions={{headerShown: false}}>
+    <Stack.Screen name="SelectionImage" component={NotificationScreen} />
+    <Stack.Screen name="Camera" component={CameraShot} />
+    <Stack.Screen name="Collections" component={ChooseImage} />
+    <Stack.Screen name="InfoTraffic" component={ReadTraffic} />
+  </Stack.Navigator>
+);
+
 const Tabs = [
   {
-    name: 'Home',
+    name: 'Biển báo giao thông',
     component: HomeScreen,
-    icon: 'home',
-    activeColor: 'tomato',
+    icon: 'traffic-light',
+    activeColor: '#001e1d',
     inActiveColor: 'gray',
   },
   {
     name: 'Activity',
     component: ActivityScreen,
-    icon: 'safari',
-    activeColor: 'tomato',
+    icon: 'history',
+    activeColor: '#001e1d',
     inActiveColor: 'gray',
   },
   {
     name: 'Notification',
-    component: NotificationScreen,
-    icon: 'bell',
-    activeColor: 'tomato',
-    inActiveColor: 'gray',
-  },
-  {
-    name: 'Me',
-    component: MeScreen,
-    icon: 'user',
-    activeColor: 'tomato',
+    component: StackCamera,
+    icon: 'camera',
+    activeColor: '#001e1d',
     inActiveColor: 'gray',
   },
 ];
@@ -52,13 +57,13 @@ export const TabButton = props => {
   useEffect(() => {
     if (focused) {
       viewRef.current.animate({
-        0: {scale: 1, rotate: '0deg'},
-        1: {scale: 1.5, rotate: '360deg'},
+        0: {scale: 1},
+        1: {scale: 1.5},
       });
     } else {
       viewRef.current.animate({
-        0: {scale: 1.5, rotate: '360deg'},
-        1: {scale: 1, rotate: '0deg'},
+        0: {scale: 1.5},
+        1: {scale: 1},
       });
     }
   }, [focused]);
@@ -67,9 +72,8 @@ export const TabButton = props => {
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={1}
-      style={styles.container}
-    >
-      <Animatable.View ref={viewRef} duration={2000} style={styles.container}>
+      style={styles.container}>
+      <Animatable.View ref={viewRef} duration={1000} style={styles.container}>
         <Icon
           name={item.icon}
           size={20}
@@ -82,19 +86,10 @@ export const TabButton = props => {
 };
 
 const screenOptions = {
-  tabBarActiveTintColor: 'tomato',
+  tabBarActiveTintColor: '#001e1d',
   tabBarInactiveTintColor: 'gray',
-  tabBarStyle: {
-    position: 'absolute',
-    height: 60,
-    bottom: 16,
-    left: 16,
-    right: 16,
-    borderRadius: 10,
-  },
   headerShown: false,
 };
-
 
 const AppNavigator = () => {
   const {stores} = useContext(MyContext);
@@ -105,19 +100,20 @@ const AppNavigator = () => {
           <Stack.Screen name="Splash" component={SplashScreen} />
         </Stack.Navigator>
       ) : (
-        <Tab.Navigator screenOptions={screenOptions}>
-          {Tabs.map((item, index) => (
-            <Tab.Screen
-              name={item.name}
-              component={item.component}
-              key={index}
-              options={{
-                tabBarShowLabel: false,
-                tabBarButton: props => <TabButton {...props} item={item} />,
-              }}
-            />
-          ))}
-        </Tab.Navigator>
+        <>
+          <Tab.Navigator screenOptions={screenOptions}>
+            {Tabs.map((item, index) => (
+              <Tab.Screen
+                name={item.name}
+                component={item.component}
+                key={index}
+                options={{
+                  tabBarButton: props => <TabButton {...props} item={item} />,
+                }}
+              />
+            ))}
+          </Tab.Navigator>
+        </>
       )}
     </NavigationContainer>
   );
