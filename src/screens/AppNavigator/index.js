@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef} from 'react';
-import {TouchableOpacity, StyleSheet} from 'react-native';
+import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -12,13 +12,33 @@ import NotificationScreen from '@screens/NotificationScreen';
 import CameraShot from '@/components/CameraShot';
 import ChooseImage from '@/components/ChooseImage';
 import ReadTraffic from '@/components/ReadTraffic';
-import * as Animatable from 'react-native-animatable';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import ProhibitSign from '@/components/TopTabsHome/ProhibitSign';
+import DangerSign from '@/components/TopTabsHome/DangerSign';
+import CommandSign from '@/components/TopTabsHome/CommandSign';
+import ExtraSign from '@/components/TopTabsHome/ExtraSign';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const TopTabHome = createMaterialTopTabNavigator();
+
+const optsTopTabs = {
+  labelStyle: {fontSize: 14},
+  tabStyle: { width: 'auto'},
+  scrollEnabled : true,
+  indicatorStyle: {
+    backgroundColor: '#001e1d'
+  },
+  style: {
+    backgroundColor: '#f9bc60',
+    color: '#001e1d'
+  }
+};
 
 const StackCamera = () => (
-  <Stack.Navigator initialRouteName="SelectionImage" screenOptions={{headerShown: false}}>
+  <Stack.Navigator
+    initialRouteName="SelectionImage"
+    screenOptions={{headerShown: false}}>
     <Stack.Screen name="SelectionImage" component={NotificationScreen} />
     <Stack.Screen name="Camera" component={CameraShot} />
     <Stack.Screen name="Collections" component={ChooseImage} />
@@ -26,10 +46,20 @@ const StackCamera = () => (
   </Stack.Navigator>
 );
 
+const TopTabsHome = () => (
+  <TopTabHome.Navigator tabBarOptions={optsTopTabs}>
+    <TopTabHome.Screen name="tất cả" component={HomeScreen} />
+    <TopTabHome.Screen name="biển báo cấm" component={ProhibitSign} />
+    <TopTabHome.Screen name="biển báo nguy hiểm" component={DangerSign} />
+    <TopTabHome.Screen name="biển báo hiệu lệnh" component={CommandSign} />
+    <TopTabHome.Screen name="biển phụ" component={ExtraSign} />
+  </TopTabHome.Navigator>
+);
+
 const Tabs = [
   {
     name: 'Biển báo giao thông',
-    component: HomeScreen,
+    component: TopTabsHome,
     icon: 'traffic-light',
     activeColor: '#001e1d',
     inActiveColor: 'gray',
@@ -52,35 +82,21 @@ const Tabs = [
 export const TabButton = props => {
   const {item, onPress, accessibilityState} = props;
   const focused = accessibilityState.selected;
-  const viewRef = useRef(null);
-
-  useEffect(() => {
-    if (focused) {
-      viewRef.current.animate({
-        0: {scale: 1},
-        1: {scale: 1.5},
-      });
-    } else {
-      viewRef.current.animate({
-        0: {scale: 1.5},
-        1: {scale: 1},
-      });
-    }
-  }, [focused]);
 
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={1}
       style={styles.container}>
-      <Animatable.View ref={viewRef} duration={1000} style={styles.container}>
+      <View style={styles.container}>
         <Icon
           name={item.icon}
           size={20}
           color={focused ? item.activeColor : item.inActiveColor}
           solid
         />
-      </Animatable.View>
+        <Text style={{ width: 'auto', fontSize: 14}}>{ item.name }</Text>
+      </View>
     </TouchableOpacity>
   );
 };
