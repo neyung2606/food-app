@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useMemo} from 'react';
 import {
   View,
   TextInput,
@@ -14,9 +14,9 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
 import {removeVietnameseTones} from '../../utils';
 import AwesomeLoading from 'react-native-awesome-loading';
-import { URL } from '../../constants';
+import { CATEGORY, URL } from '../../constants';
 
-const HomeScreen = (props) => {
+const HomeScreen = () => {
   const [textSearch, setTextSearch] = useState('');
   const [dataTraffic, setData] = useState([]);
   const [dataTmp, setDataTmp] = useState([]);
@@ -29,7 +29,7 @@ const HomeScreen = (props) => {
   const getData = useCallback(async () => {
     try {
       setLoading(true);
-      const { data: respData } = await axios.get(`${URL}/traffic_sign`);
+      const { data: respData } = await axios.get(`${URL}/traffic_sign/${CATEGORY.NGUYHIEM}`);
       setData(respData.data);
       setDataTmp(respData.data);
     } finally {
@@ -100,7 +100,7 @@ const HomeScreen = (props) => {
         <View>
           <Text style={{fontWeight: 'bold', color: 'black'}}>
             {`Có ${dataTraffic.length} biển báo trong `}
-            <Text style={{color: '#001e1d'}}>"Tất cả"</Text>
+            <Text style={{color: '#001e1d'}}>"Biển báo nguy hiểm"</Text>
           </Text>
         </View>
       </View>

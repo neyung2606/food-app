@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -17,6 +17,8 @@ import ProhibitSign from '@/components/TopTabsHome/ProhibitSign';
 import DangerSign from '@/components/TopTabsHome/DangerSign';
 import CommandSign from '@/components/TopTabsHome/CommandSign';
 import ExtraSign from '@/components/TopTabsHome/ExtraSign';
+import IntrustionSign from '@/components/TopTabsHome/IntrustionSign';
+import axios from 'axios'
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,15 +48,18 @@ const StackCamera = () => (
   </Stack.Navigator>
 );
 
-const TopTabsHome = () => (
-  <TopTabHome.Navigator tabBarOptions={optsTopTabs}>
-    <TopTabHome.Screen name="tất cả" component={HomeScreen} />
-    <TopTabHome.Screen name="biển báo cấm" component={ProhibitSign} />
-    <TopTabHome.Screen name="biển báo nguy hiểm" component={DangerSign} />
-    <TopTabHome.Screen name="biển báo hiệu lệnh" component={CommandSign} />
-    <TopTabHome.Screen name="biển phụ" component={ExtraSign} />
-  </TopTabHome.Navigator>
-);
+const TopTabsHome = () => {
+  return (
+    <TopTabHome.Navigator tabBarOptions={optsTopTabs}>
+      <TopTabHome.Screen name="tất cả" component={HomeScreen} />
+      <TopTabHome.Screen name="biển báo cấm" component={ProhibitSign} />
+      <TopTabHome.Screen name="biển báo nguy hiểm" component={DangerSign} />
+      <TopTabHome.Screen name="biển báo hiệu lệnh" component={CommandSign} />
+      <TopTabHome.Screen name="biển báo chỉ dẫn" component={IntrustionSign} />
+      <TopTabHome.Screen name="biển phụ" component={ExtraSign} />
+    </TopTabHome.Navigator>
+  );
+}
 
 const Tabs = [
   {
@@ -65,14 +70,14 @@ const Tabs = [
     inActiveColor: 'gray',
   },
   {
-    name: 'Activity',
+    name: 'Lịch sử',
     component: ActivityScreen,
     icon: 'history',
     activeColor: '#001e1d',
     inActiveColor: 'gray',
   },
   {
-    name: 'Notification',
+    name: 'Nhận diện',
     component: StackCamera,
     icon: 'camera',
     activeColor: '#001e1d',
@@ -88,14 +93,14 @@ export const TabButton = props => {
       onPress={onPress}
       activeOpacity={1}
       style={styles.container}>
-      <View style={styles.container}>
+      <View style={styles.tab}>
         <Icon
           name={item.icon}
           size={20}
           color={focused ? item.activeColor : item.inActiveColor}
           solid
         />
-        <Text style={{ width: 'auto', fontSize: 14}}>{ item.name }</Text>
+        <Text style={{ width: 'auto', fontSize: 12, color: 'black', textAlign: 'center'}}>{ item.name }</Text>
       </View>
     </TouchableOpacity>
   );
@@ -138,6 +143,12 @@ const AppNavigator = () => {
 export default AppNavigator;
 
 const styles = StyleSheet.create({
+  tab: {
+    height: 'auto',
+    width: '100%',
+    backgroundColor: '#fff',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',

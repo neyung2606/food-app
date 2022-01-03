@@ -1,4 +1,4 @@
-// import CameraRoll from '@react-native-community/cameraroll';
+import CameraRoll from '@react-native-community/cameraroll';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {
@@ -6,37 +6,60 @@ import {
   Image,
   StyleSheet,
   View,
-  ActivityIndicator,
   Dimensions,
   TouchableOpacity,
   Text,
+  PermissionsAndroid
 } from 'react-native';
-// import Spinner from 'react-native-spinkit';
+import AwesomeLoading from 'react-native-awesome-loading';
 
 const ChooseImage = ({navigation}) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [uri, setUri] = useState('');
-  const [spinner, setSpinner] = useState(false);
 
   useEffect(() => {
-    // getAllImage();
+    requestStoragePermission()
   }, []);
 
-  // const getAllImage = async () => {
-  //   setLoading(true);
-  //   const images = await CameraRoll.getPhotos({
-  //     first: 100,
-  //     assetType: 'Photos',
-  //   });
-  //   setData(images.edges);
-  //   setLoading(false);
-  // };
+  const requestStoragePermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        {
+          title: "Permission title",
+          message:
+            "Permission message",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        getAllImage()
+      } else {
+        console.log("EXTERNAL_STORAGE permission denied");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
+  const getAllImage = async () => {
+    try {
+      setLoading(true);
+      const images = await CameraRoll.getPhotos({
+        first: 1000,
+        assetType: 'Photos',
+      });
+      setData(images.edges);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChoose = async () => {
-    setSpinner(true);
     const data = new FormData();
-    console.log(uri)
     const file = {
       uri: uri,
       name: 'test1.png',
@@ -44,22 +67,21 @@ const ChooseImage = ({navigation}) => {
     };
     data.append('file', file);
     axios
-      .post('http://7e558da3acb9.ngrok.io/predict/image', data, {
+      .post(`${URL}/traffic_sign/predict`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
       .then(req => {
         navigation.navigate('Thông tin CMND');
-        setSpinner(false);
       })
       .catch(err => {
         console.log('err', err);
-        setSpinner(false);
       });
   };
 
   const renderItem = ({item}) => {
+    console.log(`item.node.image.uri`, item.node.image.uri)
     return (
       <TouchableOpacity
         onPress={() => setUri(item.node.image.uri)}
@@ -75,32 +97,9 @@ const ChooseImage = ({navigation}) => {
   };
 
   return loading ? (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color="#0000ff" />
-    </View>
+    <AwesomeLoading indicatorId={9} size={50} isActive={true} text="loading" />
   ) : (
     <View style={styles.container}>
-      {spinner && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 999,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          {/* <Spinner
-            isVisible={spinner}
-            size={100}
-            color="#0000ff"
-            type="Circle"
-          /> */}
-        </View>
-      )}
       <FlatList
         data={data}
         renderItem={renderItem}

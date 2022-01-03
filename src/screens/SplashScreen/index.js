@@ -15,7 +15,7 @@ const SplashScreen = () => {
         source={require('@/assets/splash.json')}
         autoPlay
         loop={false}
-        speed={0.5}
+        speed={1}
         onAnimationFinish={onAnimationFinish}
       />
     </View>
