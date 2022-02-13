@@ -7,10 +7,8 @@ import {MyContext} from '@context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import SplashScreen from '@screens/SplashScreen';
 import HomeScreen from '@screens/HomeScreen';
-import ActivityScreen from '@screens/ActivityScreen';
 import NotificationScreen from '@screens/NotificationScreen';
 import CameraShot from '@/components/CameraShot';
-import ChooseImage from '@/components/ChooseImage';
 import ReadTraffic from '@/components/ReadTraffic';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import ProhibitSign from '@/components/TopTabsHome/ProhibitSign';
@@ -43,7 +41,6 @@ const StackCamera = () => (
     screenOptions={{headerShown: false}}>
     <Stack.Screen name="SelectionImage" component={NotificationScreen} />
     <Stack.Screen name="Camera" component={CameraShot} />
-    <Stack.Screen name="Collections" component={ChooseImage} />
     <Stack.Screen name="InfoTraffic" component={ReadTraffic} />
   </Stack.Navigator>
 );
@@ -66,13 +63,6 @@ const Tabs = [
     name: 'Biển báo giao thông',
     component: TopTabsHome,
     icon: 'traffic-light',
-    activeColor: '#001e1d',
-    inActiveColor: 'gray',
-  },
-  {
-    name: 'Lịch sử',
-    component: ActivityScreen,
-    icon: 'history',
     activeColor: '#001e1d',
     inActiveColor: 'gray',
   },

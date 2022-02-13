@@ -7,15 +7,16 @@ import {
   Alert,
   PermissionsAndroid,
 } from 'react-native';
-// import CameraRoll from '@react-native-community/cameraroll';
+import CameraRoll from '@react-native-community/cameraroll';
 import {RNCamera} from 'react-native-camera';
-// import Spinner from 'react-native-spinkit'
 import axios from 'axios';
+import { URL } from '../constants';
+import AwesomeLoading from 'react-native-awesome-loading';
 
 const CameraShot = ({navigation}) => {
   const cameraRef = useRef(null);
   const [takingPic, setTakingPic] = useState(false);
-  const [spinner, setSpinner] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     checkPermission();
@@ -50,12 +51,8 @@ const CameraShot = ({navigation}) => {
 
       try {
         const data = await cameraRef.current.takePictureAsync(options);
-        const split = data.uri.split('/');
         // await CameraRoll.save(data.uri);
-        // const uri = `file:///storage/emulated/0/DCMI/${
-        //   split[split.length - 1]
-        // }`;
-        // console.log(uri)
+        // console.log('1', 1)
         handleImage(data.uri);
       } catch (err) {
         Alert.alert('Error', 'Failed to take picture: ' + (err.message || err));
@@ -67,7 +64,7 @@ const CameraShot = ({navigation}) => {
   };
 
   const handleImage = uri => {
-    setSpinner(true);
+    setLoading(true);
     const data = new FormData();
     const file = {
       uri: uri,
@@ -76,43 +73,25 @@ const CameraShot = ({navigation}) => {
     };
     data.append('file', file);
     axios
-      .post('http://7e558da3acb9.ngrok.io/predict/image', data, {
+      .post(`${URL}/traffic_sign/predict`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
       .then(req => {
-        navigation.navigate('InfoTraffic');
-        setSpinner(false);
+        const data = req.data || [];
+          navigation.navigate('InfoTraffic', {listResult: data});
       })
       .catch(err => {
-        console.log('err', err);
-        setSpinner(false);
+      }).finally(() => {
+        setLoading(false);
       });
   };
 
   return (
     <View style={styles.container}>
-      {spinner && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 999,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          {/* <Spinner
-            isVisible={spinner}
-            size={100}
-            color="#0000ff"
-            type="Circle"
-          /> */}
-        </View>
+      {loading && (
+        <AwesomeLoading indicatorId={9} size={50} isActive={true} text="loading" />
       )}
       <RNCamera
         ref={cameraRef}

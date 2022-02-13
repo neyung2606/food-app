@@ -13,4 +13,4 @@ export const CATEGORY = {
     PHU: "6186250d58feb10f0d3b18e0"
 }
 
-export const URL = 'http://192.168.1.13:8000'
+export const URL = 'https://be-fastapi-gm6vezyhya-as.a.run.app'

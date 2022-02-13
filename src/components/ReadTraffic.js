@@ -1,83 +1,85 @@
-import axios from 'axios';
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-// import Spinner from 'react-native-spinkit';
+import React from 'react';
+import {StyleSheet, View, FlatList, Text, Image} from 'react-native';
 
-const ReadTraffic = () => {
-  const [data, setData] = useState();
-  const [spinner, setSpinner] = useState(false);
-  useEffect(() => {
-    getData();
-  }, []);
 
-  const getData = async () => {
-    setSpinner(true);
-    const data = await axios.get('http://7e558da3acb9.ngrok.io/result');
-    setData(data.data);
-    setSpinner(false);
+const ActivityScreen = props => {
+  const listItem = props.route.params.listResult.data;
+  const renderTraffic = ({item}, index) => {
+    return (
+      <View style={styles.flashTraffic} key={index}>
+        <View style={{padding: 10}}>
+          <Image
+            source={{uri: `data:image/png;base64,${item.image}`}}
+            style={{width: 50, height: 50}}
+            resizeMode="contain"
+          />
+        </View>
+        <View style={{flex: 1, padding: 5}}>
+          <Text style={{fontWeight: 'bold', color: 'black'}}>
+            {item.signInfo.name}
+          </Text>
+          <Text style={{textAlign: 'justify', color: 'black'}}>
+            {item.signInfo.desc}
+          </Text>
+        </View>
+      </View>
+    );
   };
+
   return (
     <View style={styles.container}>
-      {spinner && (
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 999,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          {/* <Spinner
-            isVisible={spinner}
-            size={100}
-            color="#0000ff"
-            type="Circle"
-          /> */}
-        </View>
-      )}
-      <View style={styles.row}>
-        <Text style={styles.col}>Số chứng minh</Text>
-        <Text style={styles.col}>{data?.id}</Text>
+      <View style={styles.header}>
+        <Text style={styles.textHeader}>Kết quả</Text>
       </View>
-      <View style={styles.row}>
-        <Text style={styles.col}>Tên</Text>
-        <Text style={styles.col}>{data?.name}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.col}>Sinh ngày</Text>
-        <Text style={styles.col}>{data?.birth}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.col}>Nguyên quán</Text>
-        <Text style={styles.col}>{data?.home}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.col}>HKTT</Text>
-        <Text style={styles.col}>{data?.add}</Text>
+      <View style={styles.content}>
+        {listItem.length ? (
+          <View>
+            <View>
+              <Text style={{fontWeight: 'bold', color: 'black'}}>
+                {`Có ${listItem.length} biển báo trong ảnh`}
+              </Text>
+            </View>
+            <FlatList
+              data={listItem}
+              renderItem={renderTraffic}
+              keyExtractor={item => item.id}
+            />
+          </View>
+        ) : (
+          <Text
+            style={{
+              color: 'black',
+            }}>{`Không có biển báo giao thông ${listItem.length}`}</Text>
+        )}
       </View>
     </View>
   );
 };
 
+export default ActivityScreen;
+
 const styles = StyleSheet.create({
+  flashTraffic: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderBottomColor: 'black',
+    borderWidth: 1,
+  },
+  textHeader: {
+    color: '#fffffe',
+    fontSize: 20,
+  },
+  content: {
+    flex: 1,
+  },
+  header: {
+    flex: 0.1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#004643',
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  col: {
-    width: '50%',
-    justifyContent: 'flex-start',
-    paddingVertical: 30,
   },
 });
-
-export default ReadTraffic;
